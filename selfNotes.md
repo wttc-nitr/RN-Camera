@@ -1,0 +1,1 @@
+- all screens should be created in `app` directory only.
