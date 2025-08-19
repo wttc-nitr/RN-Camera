@@ -1,20 +1,72 @@
-import { Link } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Link, useFocusEffect } from "expo-router";
+import {
+  FlatList,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-export default function HomeScreen() {
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text style={{ fontSize: 24, fontWeight: "600" }}>Hello World</Text>
+import * as FileSystem from "expo-file-system";
+import { useCallback, useEffect, useState } from "react";
 
+type Media = {
+  name: string;
+  uri: string;
+};
+
+export default function HomeScreen() {
+  const [media, setMedia] = useState<Media[]>([]);
+  const loadFiles = async () => {
+    if (!FileSystem.documentDirectory) {
+      return;
+    }
+
+    const res = await FileSystem.readDirectoryAsync(
+      FileSystem.documentDirectory,
+    );
+    // console.log(res);
+    setMedia(
+      res
+        .filter((file) =>
+          /\.(jpg|jpeg|png|heic|heif|mp4|mov|3gp|mkv|webp|gif|avif)$/i.test(
+            file,
+          ),
+        )
+        .map((file) => ({
+          name: file,
+          uri: FileSystem.documentDirectory + file,
+        })),
+    );
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      loadFiles();
+    }, []),
+  );
+
+  console.log(JSON.stringify(media, null, 2));
+
+  return (
+    <View style={{ flex: 1 }}>
+      <FlatList
+        data={media}
+        renderItem={({ item }) => (
+          <Pressable style={{ flex: 1, maxWidth: "33.33%" }}>
+            <Image source={{ uri: item.uri }} style={{ aspectRatio: 3 / 4 }} />
+          </Pressable>
+        )}
+        numColumns={3}
+        contentContainerStyle={{ gap: 1 }}
+        columnWrapperStyle={{ gap: 1 }}
+      />
       <Link href="/camera" asChild>
         <Pressable style={styles.floatingButton}>
           <MaterialIcons name="photo-camera" size={30} color={"white"} />
         </Pressable>
       </Link>
-
-      <Link href={"/image-1"}>go to image 1</Link>
-      <Link href={"/image-2"}>go to image 2</Link>
-      <Link href={"/image-3"}>go to image 3</Link>
     </View>
   );
 }

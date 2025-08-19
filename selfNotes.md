@@ -8,3 +8,6 @@
 - `_layout.tsx` for shared UI elements across screens
 - if u want to do something for all the screens, you can do that in `_layout.tsx` file
 - we can have layouts for each folder
+
+###
+- `useFocusEffect` similar to `useEffect` but for screens (when screens are focused/changed)
