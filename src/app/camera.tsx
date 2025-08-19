@@ -1,11 +1,120 @@
-import { Link } from "expo-router";
-import { Text, View } from "react-native";
+import {
+  CameraCapturedPicture,
+  CameraType,
+  CameraView,
+  useCameraPermissions,
+} from "expo-camera";
+import { Link, router } from "expo-router";
+import { useEffect, useRef, useState } from "react";
+import {
+  ActivityIndicator,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 
 export default function CameraScreen() {
+  const [permission, requestCameraPermission] = useCameraPermissions();
+  const [facing, setFacing] = useState<CameraType>("back");
+  const camera = useRef<CameraView>(null);
+  const [picture, setPicture] = useState<CameraCapturedPicture>();
+  // request for camera permission
+  useEffect(() => {
+    // permission have been fetched & not granted & can ask again
+    if (permission && !permission.granted && permission.canAskAgain) {
+      requestCameraPermission();
+    }
+  }, [permission]);
+
+  const toggleCameraFacing = () => {
+    setFacing((current) => (current === "back" ? "front" : "back"));
+  };
+
+  const takePicture = async () => {
+    const res = await camera.current?.takePictureAsync();
+    console.log(res);
+    setPicture(res);
+  };
+
+  // if permission isn't granted, display a spinner
+  if (!permission?.granted) {
+    return <ActivityIndicator />;
+  }
+
+  if (picture) {
+    return (
+      <View>
+        <Image
+          source={{ uri: picture.uri }}
+          style={{ width: "100%", height: "100%" }}
+        />
+        <MaterialIcons
+          name="close"
+          size={35}
+          color={"white"}
+          style={{ position: "absolute", top: 50, left: 20 }}
+          onPress={() => {
+            setPicture(undefined);
+          }}
+        />
+      </View>
+    );
+  }
+
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text style={{ fontSize: 24, fontWeight: "600" }}>Camera Screen</Text>
-      <Link href={"/"}>go to Home</Link>
+    <View>
+      <CameraView ref={camera} style={styles.camera} facing={facing} />
+      <MaterialIcons
+        name="close"
+        color={"white"}
+        style={styles.close}
+        size={30}
+        onPress={() => router.back()}
+      />
+      <View style={styles.footer}>
+        <View />
+        <Pressable style={styles.recordButton} onPress={takePicture} />
+        <MaterialIcons
+          name="flip-camera-android"
+          size={24}
+          color={"white"}
+          onPress={toggleCameraFacing}
+        />
+      </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  camera: {
+    width: "100%",
+    height: "100%",
+  },
+  close: {
+    position: "absolute",
+    top: 40,
+    left: 20,
+    backgroundColor: "#FFFFFF40",
+  },
+  footer: {
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    marginTop: "auto",
+    padding: 20,
+    paddingBottom: 50,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#00000050",
+  },
+  recordButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+    backgroundColor: "white",
+  },
+});
