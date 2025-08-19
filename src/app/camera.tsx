@@ -13,8 +13,11 @@ import {
   StyleSheet,
   Text,
   View,
+  Button,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import path from "path";
+import * as FileSystem from "expo-file-system";
 
 export default function CameraScreen() {
   const [permission, requestCameraPermission] = useCameraPermissions();
@@ -39,6 +42,16 @@ export default function CameraScreen() {
     setPicture(res);
   };
 
+  const saveFile = async (uri: string) => {
+    const fileName = path.parse(uri).base;
+    await FileSystem.copyAsync({
+      from: uri,
+      to: FileSystem.documentDirectory + fileName,
+    });
+    setPicture(undefined);
+    // router.back()
+  };
+
   // if permission isn't granted, display a spinner
   if (!permission?.granted) {
     return <ActivityIndicator />;
@@ -51,6 +64,9 @@ export default function CameraScreen() {
           source={{ uri: picture.uri }}
           style={{ width: "100%", height: "100%" }}
         />
+        <View style={{ padding: 10, position: "absolute", top: 40, right: 20 }}>
+          <Button title="Save" onPress={() => saveFile(picture.uri)} />
+        </View>
         <MaterialIcons
           name="close"
           size={35}
