@@ -54,9 +54,14 @@ export default function HomeScreen() {
       <FlatList
         data={media}
         renderItem={({ item }) => (
-          <Pressable style={{ flex: 1, maxWidth: "33.33%" }}>
-            <Image source={{ uri: item.uri }} style={{ aspectRatio: 3 / 4 }} />
-          </Pressable>
+          <Link href={`/${item.name}`} asChild>
+            <Pressable style={{ flex: 1, maxWidth: "33.33%" }}>
+              <Image
+                source={{ uri: item.uri }}
+                style={{ aspectRatio: 3 / 4 }}
+              />
+            </Pressable>
+          </Link>
         )}
         numColumns={3}
         contentContainerStyle={{ gap: 1 }}
