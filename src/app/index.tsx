@@ -1,42 +1,19 @@
 import { Link, useFocusEffect } from "expo-router";
 import { FlatList, Image, Pressable, StyleSheet, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import * as FileSystem from "expo-file-system";
-import { useCallback, useState } from "react";
 
-type Media = {
-  name: string;
-  uri: string;
-};
+import { useCallback, useState } from "react";
+import { loadMediaFiles, Media } from "../utils/media";
 
 export default function HomeScreen() {
   const [media, setMedia] = useState<Media[]>([]);
-  const loadFiles = async () => {
-    if (!FileSystem.documentDirectory) {
-      return;
-    }
-
-    const res = await FileSystem.readDirectoryAsync(
-      FileSystem.documentDirectory,
-    );
-    // console.log(res);
-    setMedia(
-      res
-        .filter((file) =>
-          /\.(jpg|jpeg|png|heic|heif|mp4|mov|3gp|mkv|webp|gif|avif)$/i.test(
-            file,
-          ),
-        )
-        .map((file) => ({
-          name: file,
-          uri: FileSystem.documentDirectory + file,
-        })),
-    );
-  };
 
   useFocusEffect(
     useCallback(() => {
-      loadFiles();
+      (async () => {
+        const files = await loadMediaFiles();
+        setMedia(files);
+      })();
     }, []),
   );
 
@@ -49,10 +26,12 @@ export default function HomeScreen() {
         renderItem={({ item }) => (
           <Link href={`/${item.name}`} asChild>
             <Pressable style={{ flex: 1, maxWidth: "33.33%" }}>
-              <Image
-                source={{ uri: item.uri }}
-                style={{ aspectRatio: 3 / 4 }}
-              />
+              {
+                <Image
+                  source={{ uri: item.uri }}
+                  style={{ aspectRatio: 3 / 4 }}
+                />
+              }
             </Pressable>
           </Link>
         )}

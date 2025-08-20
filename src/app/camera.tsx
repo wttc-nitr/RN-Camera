@@ -1,6 +1,5 @@
 import {
   CameraCapturedPicture,
-  CameraRecordingOptions,
   CameraType,
   CameraView,
   useCameraPermissions,
@@ -10,7 +9,6 @@ import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  Image,
   Pressable,
   StyleSheet,
   View,
@@ -19,6 +17,8 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import path from "path";
 import * as FileSystem from "expo-file-system";
+import VideoPlayer from "../components/VideoPlayer";
+import ImageViewer from "../components/ImageViewer";
 
 export default function CameraScreen() {
   const [permissionCam, requestCameraPermission] = useCameraPermissions();
@@ -28,6 +28,7 @@ export default function CameraScreen() {
   const [picture, setPicture] = useState<CameraCapturedPicture>();
   const [isRecording, setIsRecording] = useState(false);
   const [video, setVideo] = useState<{ uri: string }>();
+
   // request for camera permission
   useEffect(() => {
     // permission have been fetched & not granted & can ask again
@@ -74,6 +75,7 @@ export default function CameraScreen() {
       to: FileSystem.documentDirectory + fileName,
     });
     setPicture(undefined);
+    setVideo(undefined);
     // router.back()
   };
 
@@ -82,15 +84,19 @@ export default function CameraScreen() {
     return <ActivityIndicator />;
   }
 
-  if (picture) {
+  if (picture || video) {
     return (
       <View>
-        <Image
-          source={{ uri: picture.uri }}
-          style={{ width: "100%", height: "100%" }}
-        />
+        {picture && <ImageViewer uri={picture.uri} />}
+        {video && <VideoPlayer uri={video.uri} />}
         <View style={{ padding: 10, position: "absolute", top: 40, right: 20 }}>
-          <Button title="Save" onPress={() => saveFile(picture.uri)} />
+          <Button
+            title="Save"
+            onPress={() => {
+              const uri = picture?.uri || video?.uri;
+              if (uri) saveFile(uri);
+            }}
+          />
         </View>
         <MaterialIcons
           name="close"
@@ -99,6 +105,7 @@ export default function CameraScreen() {
           style={{ position: "absolute", top: 50, left: 20 }}
           onPress={() => {
             setPicture(undefined);
+            setVideo(undefined);
           }}
         />
       </View>

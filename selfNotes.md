@@ -11,3 +11,22 @@
 
 ###
 - `useFocusEffect` similar to `useEffect` but for screens (when screens are focused/changed)
+
+###
+- for recording videos, you also need Microphone permission:
+```typescript
+import {useMicrophonePermissions, useCameraPermissions} from 'expo-camera'
+const [permissionMic, requestMicPermission] = useMicrophonePermissions();
+const [permissionCam, requestCameraPermission] = useCameraPermissions();
+
+useEffect(() => {
+  // permission have been fetched & not granted & can ask again
+  if (permissionCam && !permissionCam.granted && permissionCam.canAskAgain) {
+    requestCameraPermission();
+  }
+
+  if (permissionMic && !permissionMic.granted && permissionMic.canAskAgain) {
+    requestMicPermission();
+  }
+}, [permissionCam, permissionMic]);
+```
