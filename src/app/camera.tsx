@@ -1,8 +1,10 @@
 import {
   CameraCapturedPicture,
+  CameraRecordingOptions,
   CameraType,
   CameraView,
   useCameraPermissions,
+  useMicrophonePermissions,
 } from "expo-camera";
 import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
@@ -19,26 +21,50 @@ import path from "path";
 import * as FileSystem from "expo-file-system";
 
 export default function CameraScreen() {
-  const [permission, requestCameraPermission] = useCameraPermissions();
+  const [permissionCam, requestCameraPermission] = useCameraPermissions();
+  const [permissionMic, requestMicPermission] = useMicrophonePermissions();
   const [facing, setFacing] = useState<CameraType>("back");
   const camera = useRef<CameraView>(null);
   const [picture, setPicture] = useState<CameraCapturedPicture>();
+  const [isRecording, setIsRecording] = useState(false);
+  const [video, setVideo] = useState<{ uri: string }>();
   // request for camera permission
   useEffect(() => {
     // permission have been fetched & not granted & can ask again
-    if (permission && !permission.granted && permission.canAskAgain) {
+    if (permissionCam && !permissionCam.granted && permissionCam.canAskAgain) {
       requestCameraPermission();
     }
-  }, [permission]);
+
+    if (permissionMic && !permissionMic.granted && permissionMic.canAskAgain) {
+      requestMicPermission();
+    }
+  }, [permissionCam, permissionMic]);
 
   const toggleCameraFacing = () => {
     setFacing((current) => (current === "back" ? "front" : "back"));
   };
 
+  const onPress = () => {
+    if (isRecording) {
+      camera.current?.stopRecording();
+    } else {
+      takePicture();
+    }
+  };
+
   const takePicture = async () => {
     const res = await camera.current?.takePictureAsync();
-    console.log(res);
+    // console.log(res);
     setPicture(res);
+  };
+
+  const startRecording = async () => {
+    console.log("recording started");
+    setIsRecording(true);
+    const res = await camera.current?.recordAsync({ maxDuration: 60 });
+    setVideo(res);
+    console.log(res);
+    setIsRecording(false);
   };
 
   const saveFile = async (uri: string) => {
@@ -52,7 +78,7 @@ export default function CameraScreen() {
   };
 
   // if permission isn't granted, display a spinner
-  if (!permission?.granted) {
+  if (!permissionCam?.granted) {
     return <ActivityIndicator />;
   }
 
@@ -81,7 +107,12 @@ export default function CameraScreen() {
 
   return (
     <View>
-      <CameraView ref={camera} style={styles.camera} facing={facing} />
+      <CameraView
+        ref={camera}
+        style={styles.camera}
+        facing={facing}
+        mode="video"
+      />
       <MaterialIcons
         name="close"
         color={"white"}
@@ -91,7 +122,14 @@ export default function CameraScreen() {
       />
       <View style={styles.footer}>
         <View />
-        <Pressable style={styles.recordButton} onPress={takePicture} />
+        <Pressable
+          style={[
+            styles.recordButton,
+            { backgroundColor: isRecording ? "crimson" : "white" },
+          ]}
+          onPress={onPress}
+          onLongPress={startRecording}
+        />
         <MaterialIcons
           name="flip-camera-android"
           size={24}
