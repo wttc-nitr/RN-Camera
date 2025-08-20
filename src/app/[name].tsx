@@ -1,6 +1,6 @@
-import { Link, router, Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import { useLocalSearchParams } from "expo-router/build/hooks";
-import { Image, Text, View } from "react-native";
+import { Image, View } from "react-native";
 import * as FileSystem from "expo-file-system";
 import { MaterialIcons } from "@expo/vector-icons";
 

@@ -4,14 +4,13 @@ import {
   CameraView,
   useCameraPermissions,
 } from "expo-camera";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Image,
   Pressable,
   StyleSheet,
-  Text,
   View,
   Button,
 } from "react-native";

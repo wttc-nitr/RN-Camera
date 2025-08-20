@@ -1,15 +1,8 @@
 import { Link, useFocusEffect } from "expo-router";
-import {
-  FlatList,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { FlatList, Image, Pressable, StyleSheet, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as FileSystem from "expo-file-system";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 type Media = {
   name: string;
