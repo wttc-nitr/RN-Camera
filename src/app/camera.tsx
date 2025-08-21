@@ -1,5 +1,6 @@
 import {
   CameraCapturedPicture,
+  CameraMode,
   CameraType,
   CameraView,
   useCameraPermissions,
@@ -16,6 +17,7 @@ import {
   Alert,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import path from "path";
 import * as FileSystem from "expo-file-system";
 import VideoPlayer from "../components/VideoPlayer";
@@ -29,6 +31,7 @@ export default function CameraScreen() {
   const [picture, setPicture] = useState<CameraCapturedPicture>();
   const [isRecording, setIsRecording] = useState(false);
   const [video, setVideo] = useState<{ uri: string }>();
+  const [mode, setMode] = useState<CameraMode>("picture");
 
   // request for camera permission
   useEffect(() => {
@@ -49,10 +52,10 @@ export default function CameraScreen() {
   };
 
   const onPress = () => {
-    if (isRecording) {
-      camera.current?.stopRecording();
-    } else {
-      takePicture();
+    if (mode === "picture") takePicture();
+    else {
+      if (isRecording) camera.current?.stopRecording();
+      else startRecording();
     }
   };
 
@@ -121,7 +124,7 @@ export default function CameraScreen() {
         ref={camera}
         style={styles.camera}
         facing={facing}
-        mode="video"
+        mode={mode}
       />
       <MaterialIcons
         name="close"
@@ -131,14 +134,21 @@ export default function CameraScreen() {
         onPress={() => router.back()}
       />
       <View style={styles.footer}>
-        <View />
+        <MaterialCommunityIcons
+          name={mode === "picture" ? "camera-outline" : "video-outline"}
+          size={30}
+          color="white"
+          onPress={() => {
+            setMode((x) => (x === "picture" ? "video" : "picture"));
+          }}
+        />
+
         <Pressable
           style={[
             styles.recordButton,
             { backgroundColor: isRecording ? "crimson" : "white" },
           ]}
           onPress={onPress}
-          onLongPress={startRecording}
         />
         <MaterialIcons
           name="flip-camera-android"
