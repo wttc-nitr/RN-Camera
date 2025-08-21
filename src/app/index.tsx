@@ -26,12 +26,26 @@ export default function HomeScreen() {
         renderItem={({ item }) => (
           <Link href={`/${item.name}`} asChild>
             <Pressable style={{ flex: 1, maxWidth: "33.33%" }}>
-              {
-                <Image
-                  source={{ uri: item.uri }}
-                  style={{ aspectRatio: 3 / 4 }}
+              <Image
+                source={{ uri: item.uri }}
+                style={{ aspectRatio: 3 / 4 }}
+              />
+              {item.type === "video" && (
+                <MaterialIcons
+                  name="play-circle-outline"
+                  size={50}
+                  color={"white"}
+                  style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: [
+                      { translateX: -50 / 2 },
+                      { translateY: -50 / 2 },
+                    ],
+                  }}
                 />
-              }
+              )}
             </Pressable>
           </Link>
         )}
