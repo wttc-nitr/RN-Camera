@@ -15,6 +15,7 @@ import {
   View,
   Button,
   Alert,
+  ToastAndroid,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -80,6 +81,7 @@ export default function CameraScreen() {
       from: uri,
       to: FileSystem.documentDirectory + fileName,
     });
+    ToastAndroid.show("saved", ToastAndroid.SHORT);
     setPicture(undefined);
     setVideo(undefined);
     // router.back()

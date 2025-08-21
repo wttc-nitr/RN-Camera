@@ -1,6 +1,6 @@
 import { router, Stack } from "expo-router";
 import { useLocalSearchParams } from "expo-router/build/hooks";
-import { Alert, View } from "react-native";
+import { Alert, View, ToastAndroid } from "react-native";
 import * as FileSystem from "expo-file-system";
 import { MaterialIcons } from "@expo/vector-icons";
 import { getMediaType } from "../utils/media";
@@ -14,6 +14,7 @@ export default function ImageScreen() {
 
   const onDelete = async () => {
     await FileSystem.deleteAsync(fullURI);
+    ToastAndroid.show("Deleted", ToastAndroid.SHORT);
     router.back();
   };
 
@@ -28,6 +29,7 @@ export default function ImageScreen() {
     }
 
     const asset = await MediaLibrary.createAssetAsync(fullURI);
+    ToastAndroid.show("Saved to phone storage", ToastAndroid.SHORT);
   };
 
   return (
