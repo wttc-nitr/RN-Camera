@@ -68,7 +68,7 @@ export default function CameraScreen() {
   const startRecording = async () => {
     console.log("recording started");
     setIsRecording(true);
-    const res = await camera.current?.recordAsync({ maxDuration: 60 });
+    const res = await camera.current?.recordAsync();
     setVideo(res);
     console.log(res);
     setIsRecording(false);
