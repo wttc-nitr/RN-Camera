@@ -13,6 +13,7 @@ import {
   StyleSheet,
   View,
   Button,
+  Alert,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import path from "path";
@@ -32,12 +33,14 @@ export default function CameraScreen() {
   // request for camera permission
   useEffect(() => {
     // permission have been fetched & not granted & can ask again
-    if (permissionCam && !permissionCam.granted && permissionCam.canAskAgain) {
-      requestCameraPermission();
+    if (permissionCam && !permissionCam.granted) {
+      if (permissionCam.canAskAgain) requestCameraPermission();
+      else Alert.alert("allow camera permission");
     }
 
-    if (permissionMic && !permissionMic.granted && permissionMic.canAskAgain) {
-      requestMicPermission();
+    if (permissionMic && !permissionMic.granted) {
+      if (permissionMic.canAskAgain) requestMicPermission();
+      else Alert.alert("allow mic permission");
     }
   }, [permissionCam, permissionMic]);
 
