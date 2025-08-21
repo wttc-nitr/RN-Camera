@@ -125,6 +125,7 @@ export default function CameraScreen() {
         style={styles.camera}
         facing={facing}
         mode={mode}
+        mirror={facing === "front" ? true : false}
       />
       <MaterialIcons
         name="close"
