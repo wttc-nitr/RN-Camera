@@ -1,11 +1,12 @@
 import { router, Stack } from "expo-router";
 import { useLocalSearchParams } from "expo-router/build/hooks";
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 import * as FileSystem from "expo-file-system";
 import { MaterialIcons } from "@expo/vector-icons";
 import { getMediaType } from "../utils/media";
 import ImageViewer from "../components/ImageViewer";
 import VideoPlayer from "../components/VideoPlayer";
+import * as MediaLibrary from "expo-media-library";
 
 export default function ImageScreen() {
   const { name } = useLocalSearchParams<{ name: string }>();
@@ -17,6 +18,17 @@ export default function ImageScreen() {
   };
 
   const type = getMediaType(fullURI);
+
+  const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
+
+  const onSave = async () => {
+    if (permissionResponse?.status !== "granted") {
+      if (permissionResponse?.canAskAgain) await requestPermission();
+      else Alert.alert("allow storage permission");
+    }
+
+    const asset = await MediaLibrary.createAssetAsync(fullURI);
+  };
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -37,7 +49,7 @@ export default function ImageScreen() {
                 name="save"
                 size={26}
                 color={"dimgray"}
-                onPress={() => {}}
+                onPress={onSave}
               />
             </View>
           ),
