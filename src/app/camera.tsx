@@ -128,6 +128,7 @@ export default function CameraScreen() {
         facing={facing}
         mode={mode}
         mirror={facing === "front" ? true : false}
+        autofocus="on"
       />
       <MaterialIcons
         name="close"
@@ -139,7 +140,7 @@ export default function CameraScreen() {
       <View style={styles.footer}>
         <MaterialCommunityIcons
           name={mode === "picture" ? "camera-outline" : "video-outline"}
-          size={30}
+          size={35}
           color="white"
           onPress={() => {
             setMode((x) => (x === "picture" ? "video" : "picture"));
@@ -155,7 +156,7 @@ export default function CameraScreen() {
         />
         <MaterialIcons
           name="flip-camera-android"
-          size={24}
+          size={35}
           color={"white"}
           onPress={toggleCameraFacing}
         />
@@ -183,7 +184,7 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 50,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-around",
     alignItems: "center",
     backgroundColor: "#00000050",
   },
