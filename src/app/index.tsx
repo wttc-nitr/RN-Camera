@@ -6,69 +6,73 @@ import { useCallback, useState } from "react";
 import { loadMediaFiles, Media } from "../utils/media";
 
 export default function HomeScreen() {
-  const [media, setMedia] = useState<Media[]>([]);
+    const [media, setMedia] = useState<Media[]>([]);
 
-  useFocusEffect(
-    useCallback(() => {
-      (async () => {
-        const files = await loadMediaFiles();
-        setMedia(files);
-      })();
-    }, []),
-  );
+    useFocusEffect(
+        useCallback(() => {
+            (async () => {
+                const files = await loadMediaFiles();
+                setMedia(files);
+            })();
+        }, []),
+    );
 
-  console.log(JSON.stringify(media, null, 2));
+    console.log(JSON.stringify(media, null, 2));
 
-  return (
-    <View style={{ flex: 1 }}>
-      <FlatList
-        data={media}
-        renderItem={({ item }) => (
-          <Link href={`/${item.name}`} asChild>
-            <Pressable style={{ flex: 1, maxWidth: "33.33%" }}>
-              <Image
-                source={{ uri: item.uri }}
-                style={{ aspectRatio: 3 / 4 }}
-              />
-              {item.type === "video" && (
-                <MaterialIcons
-                  name="play-circle-outline"
-                  size={50}
-                  color={"white"}
-                  style={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: [
-                      { translateX: -50 / 2 },
-                      { translateY: -50 / 2 },
-                    ],
-                  }}
-                />
-              )}
-            </Pressable>
-          </Link>
-        )}
-        numColumns={3}
-        contentContainerStyle={{ gap: 1 }}
-        columnWrapperStyle={{ gap: 1 }}
-      />
-      <Link href="/camera" asChild>
-        <Pressable style={styles.floatingButton}>
-          <MaterialIcons name="photo-camera" size={30} color={"white"} />
-        </Pressable>
-      </Link>
-    </View>
-  );
+    return (
+        <View style={{ flex: 1 }}>
+            <FlatList
+                data={media}
+                renderItem={({ item }) => (
+                    <Link href={`/${item.name}`} asChild>
+                        <Pressable style={{ flex: 1, maxWidth: "33.33%" }}>
+                            <Image
+                                source={{ uri: item.uri }}
+                                style={{ aspectRatio: 3 / 4 }}
+                            />
+                            {item.type === "video" && (
+                                <MaterialIcons
+                                    name="play-circle-outline"
+                                    size={50}
+                                    color={"white"}
+                                    style={{
+                                        position: "absolute",
+                                        top: "50%",
+                                        left: "50%",
+                                        transform: [
+                                            { translateX: -50 / 2 },
+                                            { translateY: -50 / 2 },
+                                        ],
+                                    }}
+                                />
+                            )}
+                        </Pressable>
+                    </Link>
+                )}
+                numColumns={3}
+                contentContainerStyle={{ gap: 1 }}
+                columnWrapperStyle={{ gap: 1 }}
+            />
+            <Link href="/camera" asChild>
+                <Pressable style={styles.floatingButton}>
+                    <MaterialIcons
+                        name="photo-camera"
+                        size={30}
+                        color={"white"}
+                    />
+                </Pressable>
+            </Link>
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
-  floatingButton: {
-    backgroundColor: "royalblue",
-    padding: 15,
-    borderRadius: 50,
-    position: "absolute",
-    bottom: 20,
-    right: 20,
-  },
+    floatingButton: {
+        backgroundColor: "royalblue",
+        padding: 15,
+        borderRadius: 50,
+        position: "absolute",
+        bottom: 20,
+        right: 20,
+    },
 });
