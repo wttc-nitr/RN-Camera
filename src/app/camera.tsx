@@ -75,22 +75,18 @@ export default function CameraScreen() {
         setIsRecording(false);
     };
 
-    const saveFile = async (uri: string) => {
-        const fileName = path.parse(uri).base;
-        await FileSystem.copyAsync({
-            from: uri,
-            to: FileSystem.documentDirectory + fileName,
-        });
-        ToastAndroid.show("saved", ToastAndroid.SHORT);
-        setPicture(undefined);
-        setVideo(undefined);
-        // router.back()
-    };
+  const saveFile = async (uri: string) => {
+    try {
+      const cachedFile = new File(uri); // create an instance of the file
+      cachedFile.copy(Paths.document);
 
-    // if permission isn't granted, display a spinner
-    if (!permissionCam?.granted) {
-        return <ActivityIndicator />;
+      ToastAndroid.show("saved", ToastAndroid.SHORT);
+      setPicture(undefined);
+      setVideo(undefined);
+    } catch (error) {
+      console.error(error);
     }
+  };
 
     if (picture || video) {
         return (
