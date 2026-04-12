@@ -78,7 +78,7 @@ export default function CameraScreen() {
   const saveFile = async (uri: string) => {
     try {
       const cachedFile = new File(uri); // create an instance of the file
-      cachedFile.copy(Paths.document);
+      cachedFile.move(Paths.document);
 
       ToastAndroid.show("saved", ToastAndroid.SHORT);
       setPicture(undefined);
